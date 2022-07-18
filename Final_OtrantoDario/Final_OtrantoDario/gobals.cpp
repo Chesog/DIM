@@ -1,16 +1,16 @@
 #include "globals.h"
 
-void gotoXY(int X,int Y) 
+void gotoXY(int X, int Y)
 {
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {(short)X,(short)Y });
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (short)X,(short)Y });
 }
 void hidecursor()
 {
-    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO info;
-    info.dwSize = 100;
-    info.bVisible = FALSE;
-    SetConsoleCursorInfo(consoleHandle, &info);
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO info;
+	info.dwSize = 100;
+	info.bVisible = FALSE;
+	SetConsoleCursorInfo(consoleHandle, &info);
 }
 int pointer(int maxOption, int minOption, int& pointerCursor) // cursor para el menu
 {
@@ -48,6 +48,66 @@ int pointer(int maxOption, int minOption, int& pointerCursor) // cursor para el 
 		break;
 	default:
 		return defaultOption;
+		break;
+	}
+
+}
+int pointer(int maxOption, int minOption, int& cursorPositionX, int& cursorPositionY)
+{
+	int maxBoardSize = maxOption;
+	int max = maxBoardSize - 1;
+	int min = 0;
+	char cursor;
+
+	cursor = _getch();
+
+	switch (cursor)
+	{
+	case 'W':
+	case 'w':
+		cursorPositionY--;
+		if (cursorPositionY < min)
+		{
+			cursorPositionY = max;
+		}
+		return false;
+		break;
+	case 'S':
+	case 's':
+		cursorPositionY++;
+		if (cursorPositionY > max)
+		{
+			cursorPositionY = min;
+		}
+		return false;
+		break;
+	case 'A':
+	case 'a':
+		cursorPositionX--;
+		if (cursorPositionX < min)
+		{
+			cursorPositionX = max;
+		}
+		return false;
+		break;
+	case 'D':
+	case 'd':
+		cursorPositionX++;
+		if (cursorPositionX > max)
+		{
+			cursorPositionX = min;
+		}
+		return false;
+		break;
+	case 'E':
+	case 'e':
+		return true;
+		break;
+	case 'P':
+	case 'p':
+		return 14;
+		break;
+	default:
 		break;
 	}
 
