@@ -11,10 +11,11 @@
 #define ESC 27
 #define SPACE 32
 
-struct SnakeHead 
+struct Snake 
 {
 	int positionX{};
 	int positionY{};
+	bool isDead{};
 };
 struct Food 
 {
@@ -25,7 +26,10 @@ struct Food
 enum class Directions {Stop,Left,Right,Up,Down};
 
 int gameplay();
-void setUp(bool& gameOver, int& currentDirection, SnakeHead& snake, int whidth, int height, Food& snakeFood, int& score);
-void draw(SnakeHead snake, Food snakeFood);
-void playerInput(int& currentDirection, bool& backToMenu);
-void gameLogic();
+void setUp(bool& gameOver, int& currentDirection, Snake& snake, int whidth, int height, Food& snakeFood, int& score, bool& backToMenu,int& lastDirection);
+void drawGame();
+void drawGame(int score);
+void drawGame(Snake snake, Food snakeFood, int currentDirection,int lastDirection);
+void playerInput(int& currentDirection, bool& backToMenu,int& lastDirection);
+void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int whidth, const int height,int& score,int& tailLenght);
+Food randomiceSnakeFood(int whidth, int height);

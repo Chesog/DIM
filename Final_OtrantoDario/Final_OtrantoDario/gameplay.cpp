@@ -6,42 +6,56 @@ int gameplay()
 	bool gameOver;
 	bool backToMenu;
 
-	const int whidth = 135;
-	const int height = 38;
+	const int whidth = 40;
+	const int height = 30;
 
 	int score;
 	int currentDirection;
+	int lastDirection;
 
-	SnakeHead snake;
+	int tailPositionX[100]{};
+	int tailPositionY[100]{};
+	int tailLenght{};
+
+	Snake snake;
 	Food snakeFood;
 
-	setUp(gameOver,currentDirection,snake,whidth,height,snakeFood,score,backToMenu);
+	setUp(gameOver, currentDirection, snake, whidth, height, snakeFood, score, backToMenu,lastDirection);
+	drawGame();
 	do
 	{
-		draw(snake,snakeFood);
-		playerInput(currentDirection,backToMenu);
-		gameLogic();
-		if (backToMenu)
+		if (clock() % 100 == 0)
 		{
-			return 0;
+
+			drawGame(score);
+			drawGame(snake, snakeFood,currentDirection,lastDirection);
+			playerInput(currentDirection, backToMenu,lastDirection);
+			gameLogic(currentDirection, snake,snakeFood,whidth,height,score,tailLenght);
+			if (backToMenu)
+			{
+				system("cls");
+				return 0;
+			}
 		}
 	} while (!gameOver);
+	system("cls");
 	return 0;
 }
-void setUp(bool& gameOver,int& currentDirection,SnakeHead& snake,int whidth,int height,Food& snakeFood,int& score, bool& backToMenu)
+void setUp(bool& gameOver, int& currentDirection, Snake& snake, int whidth, int height, Food& snakeFood, int& score, bool& backToMenu,int & lastDirection)
 {
 	gameOver = false;
 	backToMenu = false;
 	currentDirection = (int)Directions::Stop;
 	snake.positionX = whidth / 2;
 	snake.positionY = height / 2;
-	snakeFood.foodPositionX = rand() % whidth;
-	snakeFood.foodPositionY = rand() % height;
+	snake.isDead = false;
+	snakeFood = randomiceSnakeFood(whidth,height);
 	score = 0;
+	lastDirection = (int)Directions::Right;
 }
-void draw(SnakeHead snake,Food snakeFood) 
+void drawGame()
 {
-	gotoXY(0,0);
+	gotoXY(0, 0);
 	char uperLeftCorner = 201; // esquina superior izquierda ╔ 
 	char uperRightCorner = 187; // esquina superior derecha ╗ 
 	char lowerLeftCorner = 200; // esquina inferior izquierda ╚ 
@@ -56,12 +70,8 @@ void draw(SnakeHead snake,Food snakeFood)
 	char empty = 32;	// valor vacio en el tablero 
 	char cherry = 162;
 
-	int maxBoardSizeColumns = 135;
-	int maxBoardSizeRows = 38;
-	int attkPly = 1;
-	int specialAttk = 2;
-	int deffPly = 3;
-	int backToMenu = 4;
+	int maxBoardSizeColumns = 42;
+	int maxBoardSizeRows = 32;
 
 	cout << "\t""\t" << uperLeftCorner;
 	for (int i = 0; i < maxBoardSizeColumns; i++)
@@ -75,20 +85,12 @@ void draw(SnakeHead snake,Food snakeFood)
 		cout << "\t""\t";
 
 		cout << verticalColumn;
-		
+
 		for (int columns = 0; columns < maxBoardSizeColumns; columns++)
 		{
 			if (columns == maxBoardSizeColumns - 1)
 			{
 				cout << empty << verticalColumn;
-			}
-			if (rows == snake.positionY && columns == snake.positionX)
-			{
-				cout << "{";
-			}
-			else if (rows == snakeFood.foodPositionY && columns == snakeFood.foodPositionX)
-			{
-				cout << cherry;
 			}
 			else
 			{
@@ -105,7 +107,80 @@ void draw(SnakeHead snake,Food snakeFood)
 	cout << lowerRightCorner;
 	cout << endl;
 }
-void playerInput(int& currentDirection, bool& backToMenu)
+void drawGame(int score) 
+{
+	gotoXY(80,2);
+	cout << "Player Score: " << score;
+}
+void drawGame(Snake snake, Food snakeFood,int currentDirection,int lastDirection)
+{
+	char empty = 32;	// valor vacio en el tablero 
+	char cherry = 162;
+	char snakeHeadUp = 118;
+	char snakeHeadDown = 94;
+	char snakeHeadLeft = 62;
+	char snakeHeadRight = 60;
+	char snakeBodyChar = 245; 
+	int maxBoardSizeColumns = 40;
+	int maxBoardSizeRows = 32;
+	int xValue = 18;
+	int yValue = 1;
+	gotoXY(xValue, yValue);
+	for (int rows = 0; rows < maxBoardSizeRows; rows++)
+	{
+		for (int columns = 0; columns < maxBoardSizeColumns; columns++)
+		{
+			gotoXY(xValue + columns, yValue + rows);
+			if (rows == snake.positionY && columns == snake.positionX)
+			{
+				if (currentDirection == (int)Directions::Up)
+				{
+					cout << snakeHeadUp;
+				}
+				else if (currentDirection == (int)Directions::Down)
+				{
+					cout << snakeHeadDown;
+				}
+				else if (currentDirection == (int)Directions::Left)
+				{
+					cout << snakeHeadLeft;
+				}
+				else if (currentDirection == (int)Directions::Right)
+				{
+					cout << snakeHeadRight;
+				}
+				else
+				{
+					if (lastDirection == (int)Directions::Up)
+					{
+						cout << snakeHeadUp;
+					}
+					else if (lastDirection == (int)Directions::Down)
+					{
+						cout << snakeHeadDown;
+					}
+					else if (lastDirection == (int)Directions::Left)
+					{
+						cout << snakeHeadLeft;
+					}
+					else
+					{
+						cout << snakeHeadRight;
+					}
+				}
+			}
+			else if (rows == snakeFood.foodPositionY && columns == snakeFood.foodPositionX)
+			{
+				cout << cherry;
+			}
+			else
+			{
+				cout << empty;
+			}
+		}
+	}
+}
+void playerInput(int& currentDirection, bool& backToMenu,int& lastDirection)
 {
 	char input;
 	if (_kbhit())
@@ -118,24 +193,60 @@ void playerInput(int& currentDirection, bool& backToMenu)
 			currentDirection = (int)Directions::Stop;
 		}
 		break;
-		case ARRIBA: 
+		case ARRIBA:
 		{
-			currentDirection = (int)Directions::Up;
+			if (currentDirection == (int)Directions::Down || lastDirection == (int)Directions::Down)
+			{
+				currentDirection = (int)Directions::Down;
+				lastDirection = (int)Directions::Down;
+			}
+			else
+			{
+				currentDirection = (int)Directions::Up;
+				lastDirection = (int)Directions::Up;
+			}
 		}
 		break;
 		case IZQUIERDA:
 		{
-			currentDirection = (int)Directions::Left;
+			if (currentDirection == (int)Directions::Right || lastDirection == (int)Directions::Right)
+			{
+				currentDirection = (int)Directions::Right;
+				lastDirection = (int)Directions::Right;
+			}
+			else
+			{
+				currentDirection = (int)Directions::Left;
+				lastDirection = (int)Directions::Left;
+			}
 		}
 		break;
 		case DERECHA:
 		{
-			currentDirection = (int)Directions::Right;
+			if (currentDirection == (int)Directions::Left || lastDirection == (int)Directions::Left)
+			{
+				currentDirection = (int)Directions::Left;
+				lastDirection = (int)Directions::Left;
+			}
+			else
+			{
+				currentDirection = (int)Directions::Right;
+				lastDirection = (int)Directions::Right;
+			}
 		}
 		break;
 		case ABAJO:
 		{
-			currentDirection = (int)Directions::Down;
+			if (currentDirection == (int)Directions::Up || lastDirection == (int)Directions::Up)
+			{
+				currentDirection = (int)Directions::Up;
+				lastDirection = (int)Directions::Up;
+			}
+			else
+			{
+				currentDirection = (int)Directions::Down;
+				lastDirection = (int)Directions::Down;
+			}
 		}
 		break;
 		case ESC:
@@ -148,7 +259,59 @@ void playerInput(int& currentDirection, bool& backToMenu)
 		}
 	}
 }
-void gameLogic() 
+void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int whidth, const int height,int & score,int& tailLenght)
 {
+	switch (currentDirection)
+	{
+	case (int)Directions::Stop:
+		snake.positionX;
+		snake.positionY;
+		break;
+	case (int)Directions::Left:
+		snake.positionX--;
+		break;
+	case (int)Directions::Right:
+		snake.positionX++;
+		break;
+	case (int)Directions::Up:
+		snake.positionY--;
+		break;
+	case (int)Directions::Down:
+		snake.positionY++;
+		break;
+	default:
+		break;
+	}
 
+	if (snake.positionX > whidth)
+	{
+		snake.positionX = 0;
+	}
+	else if (snake.positionX < 0)
+	{
+		snake.positionX = whidth;
+	}
+	if (snake.positionY < 0)
+	{
+		snake.positionY = height;
+	}
+	else if (snake.positionY > height)
+	{
+		snake.positionY = 0;
+	}
+
+	if (snake.positionX == snakeFood.foodPositionX && snake.positionY == snakeFood.foodPositionY)
+	{
+		score = score++;
+		snakeFood = randomiceSnakeFood(whidth,height);
+		tailLenght++;
+	}
+}
+Food randomiceSnakeFood(int whidth, int height)
+{
+	srand(time(NULL));
+	Food aux;
+	aux.foodPositionX = rand() % whidth;
+	aux.foodPositionY = rand() % height;
+	return aux;
 }
