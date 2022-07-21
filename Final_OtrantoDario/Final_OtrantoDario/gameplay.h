@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <iostream>
 #include <conio.h>
+#include <time.h>
 
 #define ARRIBA 72
 #define IZQUIERDA 75
@@ -15,6 +16,9 @@ struct Snake
 {
 	int positionX{};
 	int positionY{};
+	int tailPositionX[100]{};
+	int tailPositionY[100]{};
+	int tailLenght{};
 	bool isDead{};
 };
 struct Food 
@@ -31,5 +35,5 @@ void drawGame();
 void drawGame(int score);
 void drawGame(Snake snake, Food snakeFood, int currentDirection,int lastDirection);
 void playerInput(int& currentDirection, bool& backToMenu,int& lastDirection);
-void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int whidth, const int height,int& score,int& tailLenght);
+void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int whidth, const int height,int& score,int lastDirection);
 Food randomiceSnakeFood(int whidth, int height);
