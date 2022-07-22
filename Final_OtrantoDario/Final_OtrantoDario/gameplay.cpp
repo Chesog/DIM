@@ -21,10 +21,9 @@ int gameplay()
 	do
 	{
 		
-		if (clock() % 100 == 0)
+		if (clock() % 50 == 0)
 		{
-
-			drawGame(score);
+			drawGame(score,currentDirection);
 			drawGame(snake, snakeFood, currentDirection, lastDirection);
 			playerInput(currentDirection, backToMenu, lastDirection);
 			gameLogic(currentDirection, snake, snakeFood, whidth, height, score,lastDirection);
@@ -126,9 +125,83 @@ void drawGame()
 	}
 	cout << lowerRightCorner;
 	cout << endl;
+
+
+	gotoXY(103, 17);
+	cout << uperLeftCorner;
+	for (int i = 0; i < 11; i++)
+	{
+		cout << horizontalRow;
+	}
+	cout << uperRightCorner;
+	gotoXY(103, 18);
+	cout << verticalColumn << " Controles " << verticalColumn << endl;
+	gotoXY(103, 19);
+	cout << lowerLeftCorner;
+	for (int i = 0; i < 11; i++)
+	{
+		cout << horizontalRow;
+	}
+	cout << lowerRightCorner;
+
+	int maxBoardSizeColumns2 = 39;
+	int maxBoardSizeRows2 = 13;
+	int xValue = 75;
+	int yValue = 21;
+
+	gotoXY(75, 20);
+	cout << uperLeftCorner;
+	for (int i = 0; i < maxBoardSizeColumns2; i++)
+	{
+		cout << horizontalRow;
+	}
+	cout << uperRightCorner;
+	gotoXY(xValue, yValue);
+	for (int rows = 0; rows < maxBoardSizeRows2; rows++)
+	{
+		for (int columns = 0; columns < maxBoardSizeColumns2; columns++)
+		{
+			gotoXY(xValue + columns, yValue + rows);
+			if (columns == 0)
+			{
+				cout << verticalColumn;
+			}
+			if (columns == maxBoardSizeColumns2 - 1)
+			{
+				cout << empty << empty << verticalColumn;
+			}
+			else
+			{
+				cout << empty;
+			}
+		}
+		cout << endl;
+	}
+	gotoXY(75, 34);
+	cout << lowerLeftCorner;
+	for (int i = 0; i < maxBoardSizeColumns2; i++)
+	{
+		cout << horizontalRow;
+	}
+	cout << lowerRightCorner;
 }
-void drawGame(int score)
+void drawGame(int score,int currentDirection)
 {
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	char uperLeftCorner = 201; // esquina superior izquierda ╔ 
+	char uperRightCorner = 187; // esquina superior derecha ╗ 
+	char lowerLeftCorner = 200; // esquina inferior izquierda ╚ 
+	char lowerRightCorner = 188; // esquina inferior Derecha ╝ 
+	char horizontalRow = 205;	// linea horizontal ═ 
+	char verticalColumn = 186; // linea vertical ║ 
+	char uperConection = 203; // conector superior ╦ 
+	char lowerConection = 202; // conector inferior ╩ 
+	char horizontalConection = 185; // conector derecho ╣ 
+	char verticalConection = 204; // conector izquierdo ╠ 
+	char crosConection = 206; // interseccion ╬ 
+	char empty = 32;	// valor vacio en el tablero 
+
 	gotoXY(65,0);
 	cout <<   "  ________   _____  ___         __       __   ___    _______    " << endl;
 	gotoXY(65, 1);
@@ -158,11 +231,136 @@ void drawGame(int score)
 	cout << R"((:      "| |:       :)  /\  |\      \:  |      /\  |\   \        /   |    \    \ | )" << endl;
 	gotoXY(65, 14);
 	cout << R"( \_______) (________/  (__\_|_)      \__|     (__\_|_)   \"_____/     \___|\____\) )" << endl;
-	gotoXY(90, 16);
-	cout << "Player Score: " << score;
+
+	int scoreLenght = 0;
+
+	if (score < 10)
+	{
+		scoreLenght = 17;
+	}
+	else if (score >= 10 && score < 100)
+	{
+		scoreLenght = 18;
+	}
+	else
+	{
+		scoreLenght = 19;
+	}
+	
+	gotoXY(75, 17);
+	cout << uperLeftCorner;
+	for (int i = 0; i < scoreLenght; i++)
+	{
+		cout << horizontalRow;
+	}
+	cout << uperRightCorner;
+	gotoXY(75, 18);
+	cout << verticalColumn << " Player Score: " << score <<  " " << verticalColumn << endl;
+	gotoXY(75, 19);
+	cout << lowerLeftCorner;
+	for (int i = 0; i < scoreLenght; i++)
+	{
+		cout << horizontalRow;
+	}
+	cout << lowerRightCorner;
+
+	if (currentDirection == (int)Directions::Up)
+	{
+		SetConsoleTextAttribute(h, 10);
+	}
+	else
+	{
+		SetConsoleTextAttribute(h, 9);
+	}
+	gotoXY(93, 22);
+	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+	gotoXY(93, 23);
+	cout << verticalColumn << " ^ " << verticalColumn << endl;
+	gotoXY(93, 24);
+	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+
+	if (currentDirection == (int)Directions::Left)
+	{
+		SetConsoleTextAttribute(h, 10);
+	}
+	else
+	{
+		SetConsoleTextAttribute(h, 9);
+	}
+	gotoXY(88, 25);
+	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+	gotoXY(88, 26);
+	cout << verticalColumn << " < " << verticalColumn << endl;
+	gotoXY(88, 27);
+	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+
+
+	if (currentDirection == (int)Directions::Down)
+	{
+		SetConsoleTextAttribute(h, 10);
+	}
+	else
+	{
+		SetConsoleTextAttribute(h, 9);
+	}
+	gotoXY(93, 25);
+	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+	gotoXY(93, 26);
+	cout << verticalColumn << " v " << verticalColumn << endl;
+	gotoXY(93, 27);
+	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+
+	if (currentDirection == (int)Directions::Right)
+	{
+		SetConsoleTextAttribute(h, 10);
+	}
+	else
+	{
+		SetConsoleTextAttribute(h, 9);
+	}
+	gotoXY(98, 25);
+	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+	gotoXY(98, 26);
+	cout << verticalColumn << " > " << verticalColumn << endl;
+	gotoXY(98, 27);
+	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+	SetConsoleTextAttribute(h, 9);
+
+	gotoXY(82, 21);
+	cout << "Movimiento de la Serpiente" << endl;
+
+	if (currentDirection == (int)Directions::Stop)
+	{
+		SetConsoleTextAttribute(h, 10);
+	}
+	else
+	{
+		SetConsoleTextAttribute(h, 9);
+	}
+	gotoXY(80, 28);
+	cout << uperLeftCorner << horizontalRow  << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+	gotoXY(80, 29);
+	cout << verticalColumn << " Space " << verticalColumn << endl;
+	gotoXY(80, 30);
+	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+	SetConsoleTextAttribute(h, 9);
+	gotoXY(90, 29);
+	cout << "Pausar el Juego" << endl;
+
+	gotoXY(80, 31);
+	cout << uperLeftCorner  << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+	gotoXY(80, 32);
+	cout << verticalColumn << " Esc " << verticalColumn << endl;
+	gotoXY(80, 33);
+	cout << lowerLeftCorner  << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+	gotoXY(90, 32);
+	cout << "Volver al Menu Principal" << endl;
 }
 void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirection)
 {
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+	//SetConsoleTextAttribute(h, 14);
+
 	char empty = 32;	// valor vacio en el tablero 
 	char cherry = 162;
 	char snakeDeadHead = 120;
@@ -171,7 +369,7 @@ void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirecti
 	char snakeHeadLeft = 62;
 	char snakeHeadRight = 60;
 	char snakeBodyChar = 245;
-	char snakeDeadBodyChar = 88;
+	char snakeDeadBodyChar = 43;
 	int maxBoardSizeColumns = 42;
 	int maxBoardSizeRows = 33;
 	int xValue = 17;
@@ -225,7 +423,9 @@ void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirecti
 				}
 				else
 				{
+					SetConsoleTextAttribute(h, 12);
 					cout << snakeDeadHead;
+					SetConsoleTextAttribute(h, 9);
 				}
 			}
 			else if (rows == snakeFood.foodPositionY && columns == snakeFood.foodPositionX)
@@ -242,8 +442,10 @@ void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirecti
 					{
 						if (snake.isDead)
 						{
+							SetConsoleTextAttribute(h, 12);
 							cout << snakeDeadBodyChar;
 						}
+						SetConsoleTextAttribute(h, 9);
 						cout << snakeBodyChar;
 						print = true;
 					}
