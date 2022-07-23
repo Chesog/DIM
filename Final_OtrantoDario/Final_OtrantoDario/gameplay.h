@@ -25,10 +25,11 @@ struct Food
 enum class Directions {Stop,Left,Right,Up,Down};
 
 int gameplay();
-void setUp(bool& gameOver, int& currentDirection, Snake& snake, int whidth, int height, Food& snakeFood, int& score, bool& backToMenu,int& lastDirection);
+int secondWill(int score,int& pointerCursor);
+void setUp(bool& gameOver, int& currentDirection, Snake& snake, int whidth, int height, Food& snakeFood, int& score, bool& backToMenu,int& lastDirection, bool& gamInPause,int& pointerCursor);
 void drawGame();
 void drawGame(int score,int currentDirection);
 void drawGame(Snake snake, Food snakeFood, int currentDirection,int lastDirection);
-void playerInput(int& currentDirection, bool& backToMenu,int& lastDirection);
+void playerInput(int& currentDirection, bool& backToMenu,int& lastDirection, bool& gamInPause);
 void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int whidth, const int height,int& score,int lastDirection);
 Food randomiceSnakeFood(int whidth, int height);

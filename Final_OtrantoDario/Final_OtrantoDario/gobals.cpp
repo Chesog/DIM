@@ -24,8 +24,7 @@ int pointer(int maxOption, int minOption, int& pointerCursor) // cursor para el 
 	cursor = _getch();
 	switch (cursor)
 	{
-	case 'W':
-	case 'w':
+	case ARRIBA:
 		pointerCursor--;
 		if (pointerCursor < min)
 		{
@@ -33,8 +32,7 @@ int pointer(int maxOption, int minOption, int& pointerCursor) // cursor para el 
 		}
 		return defaultOption;
 		break;
-	case 'S':
-	case 's':
+	case ABAJO:
 		pointerCursor++;
 		if (pointerCursor > max)
 		{
@@ -42,72 +40,11 @@ int pointer(int maxOption, int minOption, int& pointerCursor) // cursor para el 
 		}
 		return defaultOption;
 		break;
-	case 'E':
-	case 'e':
+	case SPACE:
 		return pointerCursor;
 		break;
 	default:
 		return defaultOption;
-		break;
-	}
-
-}
-int pointer(int maxOption, int minOption, int& cursorPositionX, int& cursorPositionY)
-{
-	int maxBoardSize = maxOption;
-	int max = maxBoardSize - 1;
-	int min = 0;
-	char cursor;
-
-	cursor = _getch();
-
-	switch (cursor)
-	{
-	case 'W':
-	case 'w':
-		cursorPositionY--;
-		if (cursorPositionY < min)
-		{
-			cursorPositionY = max;
-		}
-		return false;
-		break;
-	case 'S':
-	case 's':
-		cursorPositionY++;
-		if (cursorPositionY > max)
-		{
-			cursorPositionY = min;
-		}
-		return false;
-		break;
-	case 'A':
-	case 'a':
-		cursorPositionX--;
-		if (cursorPositionX < min)
-		{
-			cursorPositionX = max;
-		}
-		return false;
-		break;
-	case 'D':
-	case 'd':
-		cursorPositionX++;
-		if (cursorPositionX > max)
-		{
-			cursorPositionX = min;
-		}
-		return false;
-		break;
-	case 'E':
-	case 'e':
-		return true;
-		break;
-	case 'P':
-	case 'p':
-		return 14;
-		break;
-	default:
 		break;
 	}
 

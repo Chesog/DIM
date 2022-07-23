@@ -5,28 +5,31 @@ int gameplay()
 	system("cls");
 	bool gameOver;
 	bool backToMenu;
+	bool gameInPause;
 
-	const int whidth = 42;
-	const int height = 33;
-
+	int whidth = 42;
+	int height = 33;
 	int score;
+	int pointerCursor;
 	int currentDirection;
 	int lastDirection;
 
 	Snake snake;
 	Food snakeFood;
 
-	setUp(gameOver, currentDirection, snake, whidth, height, snakeFood, score, backToMenu, lastDirection);
+	setUp(gameOver, currentDirection, snake, whidth, height, snakeFood, score, backToMenu, lastDirection, gameInPause,pointerCursor);
 	drawGame();
 	do
 	{
-		
-		if (clock() % 50 == 0)
+		playerInput(currentDirection, backToMenu, lastDirection, gameInPause);
+		if (clock() % 10 == 0)
 		{
-			drawGame(score,currentDirection);
-			drawGame(snake, snakeFood, currentDirection, lastDirection);
-			playerInput(currentDirection, backToMenu, lastDirection);
-			gameLogic(currentDirection, snake, snakeFood, whidth, height, score,lastDirection);
+			drawGame(score, currentDirection);
+			if (!gameInPause)
+			{
+				drawGame(snake, snakeFood, currentDirection, lastDirection);
+			}
+			gameLogic(currentDirection, snake, snakeFood, whidth, height, score, lastDirection);
 			if (backToMenu)
 			{
 				system("cls");
@@ -40,13 +43,8 @@ int gameplay()
 	} while (!gameOver);
 	int playerAnsw;
 	drawGame(snake, snakeFood, currentDirection, lastDirection);
-	gotoXY(90,20);
-	cout << "Volver a Jugar ?" << endl;
-	gotoXY(90, 21);
-	cout << "1 = Si" << endl;
-	gotoXY(90, 22);
-	cout << "2 = No" << endl;
-	cin >> playerAnsw;
+
+	playerAnsw = secondWill(score,pointerCursor);
 	if (playerAnsw == 1)
 	{
 		return 1;
@@ -57,8 +55,10 @@ int gameplay()
 		return 0;
 	}
 }
-void setUp(bool& gameOver, int& currentDirection, Snake& snake, int whidth, int height, Food& snakeFood, int& score, bool& backToMenu, int& lastDirection)
+void setUp(bool& gameOver, int& currentDirection, Snake& snake, int whidth, int height, Food& snakeFood, int& score, bool& backToMenu, int& lastDirection, bool& gamInPause,int& pointerCursor)
 {
+	whidth = 42;
+	height = 33;
 	gameOver = false;
 	backToMenu = false;
 	currentDirection = (int)Directions::Stop;
@@ -69,11 +69,13 @@ void setUp(bool& gameOver, int& currentDirection, Snake& snake, int whidth, int 
 	snakeFood = randomiceSnakeFood(whidth, height);
 	score = 0;
 	lastDirection = (int)Directions::Right;
+	gamInPause = true;
+	pointerCursor = 1;
 }
 void drawGame()
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-	//SetConsoleTextAttribute(h, 14);
+	SetConsoleTextAttribute(h, 15);
 	gotoXY(0, 0);
 	char uperLeftCorner = 201; // esquina superior izquierda ╔ 
 	char uperRightCorner = 187; // esquina superior derecha ╗ 
@@ -126,7 +128,7 @@ void drawGame()
 	cout << lowerRightCorner;
 	cout << endl;
 
-
+	SetConsoleTextAttribute(h, 9);
 	gotoXY(103, 17);
 	cout << uperLeftCorner;
 	for (int i = 0; i < 11; i++)
@@ -185,7 +187,7 @@ void drawGame()
 	}
 	cout << lowerRightCorner;
 }
-void drawGame(int score,int currentDirection)
+void drawGame(int score, int currentDirection)
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -202,8 +204,9 @@ void drawGame(int score,int currentDirection)
 	char crosConection = 206; // interseccion ╬ 
 	char empty = 32;	// valor vacio en el tablero 
 
-	gotoXY(65,0);
-	cout <<   "  ________   _____  ___         __       __   ___    _______    " << endl;
+	SetConsoleTextAttribute(h, 10);
+	gotoXY(65, 0);
+	cout << "  ________   _____  ___         __       __   ___    _______    " << endl;
 	gotoXY(65, 1);
 	cout << R"( /"       ) (\"   \|"  \       /""\     |/"| /  ")  /"     "|    )" << endl;
 	gotoXY(65, 2);
@@ -246,7 +249,7 @@ void drawGame(int score,int currentDirection)
 	{
 		scoreLenght = 19;
 	}
-	
+	SetConsoleTextAttribute(h, 32);
 	gotoXY(75, 17);
 	cout << uperLeftCorner;
 	for (int i = 0; i < scoreLenght; i++)
@@ -255,7 +258,7 @@ void drawGame(int score,int currentDirection)
 	}
 	cout << uperRightCorner;
 	gotoXY(75, 18);
-	cout << verticalColumn << " Player Score: " << score <<  " " << verticalColumn << endl;
+	cout << verticalColumn << " Player Score: " << score << " " << verticalColumn << endl;
 	gotoXY(75, 19);
 	cout << lowerLeftCorner;
 	for (int i = 0; i < scoreLenght; i++)
@@ -331,6 +334,27 @@ void drawGame(int score,int currentDirection)
 
 	if (currentDirection == (int)Directions::Stop)
 	{
+		SetConsoleTextAttribute(h, 96);
+		gotoXY(23, 15);
+		cout << uperLeftCorner;
+		for (int i = 0; i < 30; i++)
+		{
+			cout << horizontalRow;
+		}
+		cout << uperRightCorner << endl;
+		gotoXY(23, 16);
+		cout << verticalColumn << "        Juego en Pausa        " << verticalColumn << endl;
+		gotoXY(23, 17);
+		cout << verticalColumn << "      Precione una tecla      " << verticalColumn << endl;
+		gotoXY(23, 18);
+		cout << verticalColumn << " De Movimiento para Continuar " << verticalColumn << endl;
+		gotoXY(23, 19);
+		cout << lowerLeftCorner;
+		for (int i = 0; i < 30; i++)
+		{
+			cout << horizontalRow;
+		}
+		cout << lowerRightCorner << endl;
 		SetConsoleTextAttribute(h, 10);
 	}
 	else
@@ -338,7 +362,7 @@ void drawGame(int score,int currentDirection)
 		SetConsoleTextAttribute(h, 9);
 	}
 	gotoXY(80, 28);
-	cout << uperLeftCorner << horizontalRow  << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
 	gotoXY(80, 29);
 	cout << verticalColumn << " Space " << verticalColumn << endl;
 	gotoXY(80, 30);
@@ -348,11 +372,11 @@ void drawGame(int score,int currentDirection)
 	cout << "Pausar el Juego" << endl;
 
 	gotoXY(80, 31);
-	cout << uperLeftCorner  << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
 	gotoXY(80, 32);
 	cout << verticalColumn << " Esc " << verticalColumn << endl;
 	gotoXY(80, 33);
-	cout << lowerLeftCorner  << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
 	gotoXY(90, 32);
 	cout << "Volver al Menu Principal" << endl;
 }
@@ -458,17 +482,18 @@ void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirecti
 		}
 	}
 }
-void playerInput(int& currentDirection, bool& backToMenu, int& lastDirection)
+void playerInput(int& currentDirection, bool& backToMenu, int& lastDirection, bool& gamInPause)
 {
-	char input;
+	char playerInput;
 	if (_kbhit())
 	{
-		input = _getch();
-		switch (input)
+		playerInput = _getch();
+		switch (playerInput)
 		{
 		case SPACE:
 		{
 			currentDirection = (int)Directions::Stop;
+			gamInPause = true;
 		}
 		break;
 		case ARRIBA:
@@ -483,6 +508,7 @@ void playerInput(int& currentDirection, bool& backToMenu, int& lastDirection)
 				currentDirection = (int)Directions::Up;
 				lastDirection = (int)Directions::Up;
 			}
+			gamInPause = false;
 		}
 		break;
 		case IZQUIERDA:
@@ -497,6 +523,7 @@ void playerInput(int& currentDirection, bool& backToMenu, int& lastDirection)
 				currentDirection = (int)Directions::Left;
 				lastDirection = (int)Directions::Left;
 			}
+			gamInPause = false;
 		}
 		break;
 		case DERECHA:
@@ -511,6 +538,7 @@ void playerInput(int& currentDirection, bool& backToMenu, int& lastDirection)
 				currentDirection = (int)Directions::Right;
 				lastDirection = (int)Directions::Right;
 			}
+			gamInPause = false;
 		}
 		break;
 		case ABAJO:
@@ -525,6 +553,7 @@ void playerInput(int& currentDirection, bool& backToMenu, int& lastDirection)
 				currentDirection = (int)Directions::Down;
 				lastDirection = (int)Directions::Down;
 			}
+			gamInPause = false;
 		}
 		break;
 		case ESC:
@@ -613,6 +642,99 @@ void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int w
 		score = score++;
 		snakeFood = randomiceSnakeFood(whidth, height);
 		snake.tailLenght++;
+	}
+}
+int secondWill(int score,int& pointerCursor)
+{
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	char uperLeftCorner = 201; // esquina superior izquierda ╔ 
+	char uperRightCorner = 187; // esquina superior derecha ╗ 
+	char lowerLeftCorner = 200; // esquina inferior izquierda ╚ 
+	char lowerRightCorner = 188; // esquina inferior Derecha ╝ 
+	char horizontalRow = 205;	// linea horizontal ═ 
+	char verticalColumn = 186; // linea vertical ║ 
+	char uperConection = 203; // conector superior ╦ 
+	char lowerConection = 202; // conector inferior ╩ 
+	char horizontalConection = 185; // conector derecho ╣ 
+	char verticalConection = 204; // conector izquierdo ╠ 
+	char crosConection = 206; // interseccion ╬ 
+	char empty = 32;	// valor vacio en el tablero 
+
+	bool secondWillSelection = false;
+	int playerSecondWillSelection;
+	do
+	{
+		SetConsoleTextAttribute(h, 96);
+		gotoXY(23, 15);
+		cout << uperLeftCorner;
+		for (int i = 0; i < 30; i++)
+		{
+			cout << horizontalRow;
+		}
+		cout << uperRightCorner << endl;
+		gotoXY(23, 16);
+		cout << verticalColumn << "          Game  Over          " << verticalColumn << endl;
+		gotoXY(23, 17);
+		cout << verticalColumn << "       player Score: " << score ;
+		if (score < 10)
+		{
+			cout << "        ";
+		}
+		else if (score >= 10 && score < 100)
+		{
+			cout << "       ";
+		}
+		else
+		{
+			cout << "      ";
+		}
+		cout << verticalColumn << endl;
+		gotoXY(23, 18);
+		cout << verticalColumn << "       Volver a Jugar ?       " << verticalColumn << endl;
+		gotoXY(23, 19);
+		cout << verticalColumn;
+		if (pointerCursor == 1)
+		{
+			SetConsoleTextAttribute(h, 14);
+		}
+		cout << "              Si              ";
+		SetConsoleTextAttribute(h, 96);
+		cout << verticalColumn << endl;
+		gotoXY(23, 20);
+		cout << verticalColumn;
+		if (pointerCursor == 2)
+		{
+			SetConsoleTextAttribute(h, 14);
+		}
+		cout << "              No              ";
+		SetConsoleTextAttribute(h, 96);
+		cout << verticalColumn << endl;
+		gotoXY(23, 21);
+		cout << lowerLeftCorner;
+		for (int i = 0; i < 30; i++)
+		{
+			cout << horizontalRow;
+		}
+		cout << lowerRightCorner << endl;
+
+		playerSecondWillSelection = pointer(2,1,pointerCursor);
+
+		if (playerSecondWillSelection != 0)
+		{
+			secondWillSelection = true;
+		}
+		SetConsoleTextAttribute(h, 14);
+	} while (!secondWillSelection);
+
+	system("cls");
+	if (playerSecondWillSelection == 1)
+	{
+		return playerSecondWillSelection;
+	}
+	else if (playerSecondWillSelection == 2)
+	{
+		return 0;
 	}
 }
 Food randomiceSnakeFood(int whidth, int height)

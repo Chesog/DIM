@@ -6,7 +6,7 @@
 #include "gameplay.h"
 
 using namespace std;    // std::cout, std::cin
-void mainMenu(float& frameRate);
+void mainMenu();
 int showMainMenu(int& pointerCursor);
 bool showExitScreen();
 int credits();
