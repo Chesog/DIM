@@ -8,6 +8,9 @@ void mainMenu()
 	bool gameOn = true;
 	int menuAnsw = 0;
 	int pointerCursor = 1;
+	int winPoints = 1235;
+	int headColor = 15;
+	int bodyColor = 10;
 	do
 	{
 		switch (menuAnsw)
@@ -16,7 +19,10 @@ void mainMenu()
 			menuAnsw = showMainMenu(pointerCursor);
 			break;
 		case (int)MenuStates::Gameplay:
-			menuAnsw = gameplay();
+			menuAnsw = gameplay(winPoints,headColor,bodyColor);
+			break;
+		case (int)MenuStates::Options:
+			menuAnsw = optionsMenu(winPoints,headColor,bodyColor);
 			break;
 		case (int)MenuStates::Rules:
 			break;
@@ -62,8 +68,6 @@ int showMainMenu(int& pointerCursor)
 					|.  \    /:  | /   /  \\  \ |:       :) |    \    \ | (:      "|  /" \   :)   /" \   :)  
 					|___|\__/|___|(___/    \___)(________/   \___|\____\)  \_______) (_______/   (_______/   
 					                                                                                 )" << endl;
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 	if (pointerCursor == (int)MenuStates::Gameplay)
 	{
 		SetConsoleTextAttribute(h, 160);
@@ -76,15 +80,27 @@ int showMainMenu(int& pointerCursor)
 	cout << "'-------'" << endl;
 	cout << endl;
 	SetConsoleTextAttribute(h, 10);
-	if (pointerCursor == (int)MenuStates::Rules)
+	if (pointerCursor == (int)MenuStates::Options)
 	{
 		SetConsoleTextAttribute(h, 160);
 	}
 	gotoXY(80, 23);
-	cout << ".--------." << endl;
+	cout << ".----------." << endl;
 	gotoXY(80, 24);
-	cout << "| Reglas |" << endl;
+	cout << "| Opciones |" << endl;
 	gotoXY(80, 25);
+	cout << "'----------'" << endl;
+	cout << endl;
+	SetConsoleTextAttribute(h, 10);
+	if (pointerCursor == (int)MenuStates::Rules)
+	{
+		SetConsoleTextAttribute(h, 160);
+	}
+	gotoXY(80, 27);
+	cout << ".--------." << endl;
+	gotoXY(80, 28);
+	cout << "| Reglas |" << endl;
+	gotoXY(80, 29);
 	cout << "'--------'" << endl;
 	cout << endl;
 	SetConsoleTextAttribute(h, 10);
@@ -92,11 +108,11 @@ int showMainMenu(int& pointerCursor)
 	{
 		SetConsoleTextAttribute(h, 160);
 	}
-	gotoXY(79, 27);
+	gotoXY(79, 31);
 	cout << ".----------." << endl;
-	gotoXY(79, 28);
+	gotoXY(79, 32);
 	cout << "| Creditos |" << endl;
-	gotoXY(79, 29);
+	gotoXY(79, 33);
 	cout << "'----------'" << endl;
 	cout << endl;
 	SetConsoleTextAttribute(h, 10);
@@ -104,11 +120,11 @@ int showMainMenu(int& pointerCursor)
 	{
 		SetConsoleTextAttribute(h, 160);
 	}
-	gotoXY(80, 31);
+	gotoXY(80, 35);
 	cout << ".-------." << endl;
-	gotoXY(80, 32);
+	gotoXY(80, 36);
 	cout << "| Salir |" << endl;
-	gotoXY(80, 33);
+	gotoXY(80, 37);
 	cout << "'-------'" << endl;
 	cout << endl;
 	SetConsoleTextAttribute(h, 10);
@@ -138,23 +154,26 @@ int showMainMenu(int& pointerCursor)
 	}
 
 }
-bool showExitScreen() // muestra el mensaje de salida
+int optionsMenu(int& winPoints, int& headColor, int& bodyColor)
 {
-	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(h, 12);
+	bool exitMenu = false;
 	system("cls");
-	cout << R"(
-					  .-')       ('-.                             ('-.        .-') _   _ .-') _                
-					 ( OO ).    ( OO ).-.                       _(  OO)      ( OO ) ) ( (  OO) )               
-					(_)---\_)   / . --. /  ,--.        ,-.-')  (,------. ,--./ ,--,'   \     .'_   .-'),-----. 
-					/    _ |    | \-.  \   |  |.-')    |  |OO)  |  .---' |   \ |  |\   ,`'--..._) ( OO'  .-.  '
-					\  :` `.  .-'-'  |  |  |  | OO )   |  |  \  |  |     |    \|  | )  |  |  \  ' /   |  | |  |
-					 '..`''.)  \| |_.'  |  |  |`-' |   |  |(_/ (|  '--.  |  .     |/   |  |   ' | \_) |  |\|  |
-					.-._)   \   |  .-.  | (|  '---.'  ,|  |_.'  |  .--'  |  |\    |    |  |   / :   \ |  | |  |
-					\       /   |  | |  |  |      |  (_|  |     |  `---. |  | \   |    |  '--'  /    `'  '-'  '
-					 `-----'    `--' `--'  `------'    `--'     `------' `--'  `--'    `-------'       `-----' )" << endl;
-	system("pause");
-	return false;
+	do
+	{
+		gotoXY(0,0);
+		HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(h, 14);
+		cout << R"(
+					    ______       _______     ______     __         ______     _____  ___     _______    ________  
+					   /    " \     |   __ "\   /" _  "\   |" \       /    " \   (\"   \|"  \   /"     "|  /"       ) 
+					  // ____  \    (. |__) :) (: ( \___)  ||  |     // ____  \  |.\\   \    | (: ______) (:   \___/  
+					 /  /    ) :)   |:  ____/   \/ \       |:  |    /  /    ) :) |: \.   \\  |  \/    |    \___  \    
+					(: (____/ //    (|  /       //  \ _    |.  |   (: (____/ //  |.  \    \. |  // ___)_    __/  \\   
+					 \        /    /|__/ \     (:   _) \   /\  |\   \        /   |    \    \ | (:      "|  /" \   :)  
+					  \"_____/    (_______)     \_______) (__\_|_)   \"_____/     \___|\____\)  \_______) (_______/   
+				                                                                                                  )" << endl;
+	} while (!exitMenu);
+	return 0;
 }
 int credits() // Funcion con el dibujado de los creditos
 {
@@ -208,6 +227,25 @@ int credits() // Funcion con el dibujado de los creditos
 		return returnValue;
 	}
 }
+bool showExitScreen() // muestra el mensaje de salida
+{
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(h, 12);
+	system("cls");
+	cout << R"(
+					  .-')       ('-.                             ('-.        .-') _   _ .-') _                
+					 ( OO ).    ( OO ).-.                       _(  OO)      ( OO ) ) ( (  OO) )               
+					(_)---\_)   / . --. /  ,--.        ,-.-')  (,------. ,--./ ,--,'   \     .'_   .-'),-----. 
+					/    _ |    | \-.  \   |  |.-')    |  |OO)  |  .---' |   \ |  |\   ,`'--..._) ( OO'  .-.  '
+					\  :` `.  .-'-'  |  |  |  | OO )   |  |  \  |  |     |    \|  | )  |  |  \  ' /   |  | |  |
+					 '..`''.)  \| |_.'  |  |  |`-' |   |  |(_/ (|  '--.  |  .     |/   |  |   ' | \_) |  |\|  |
+					.-._)   \   |  .-.  | (|  '---.'  ,|  |_.'  |  .--'  |  |\    |    |  |   / :   \ |  | |  |
+					\       /   |  | |  |  |      |  (_|  |     |  `---. |  | \   |    |  '--'  /    `'  '-'  '
+					 `-----'    `--' `--'  `------'    `--'     `------' `--'  `--'    `-------'       `-----' )" << endl;
+	system("pause");
+	return false;
+}
+
 
 
 

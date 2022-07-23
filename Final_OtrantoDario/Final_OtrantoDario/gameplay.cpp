@@ -1,11 +1,12 @@
 ﻿#include "gameplay.h"
 
-int gameplay()
+int gameplay(int winPoints,int headColor,int bodyColor)
 {
 	system("cls");
 	bool gameOver;
 	bool backToMenu;
 	bool gameInPause;
+	bool winCondition = false;
 
 	int whidth = 42;
 	int height = 33;
@@ -17,7 +18,7 @@ int gameplay()
 	Snake snake;
 	Food snakeFood;
 
-	setUp(gameOver, currentDirection, snake, whidth, height, snakeFood, score, backToMenu, lastDirection, gameInPause,pointerCursor);
+	setUp(gameOver, currentDirection, snake, whidth, height, snakeFood, score, backToMenu, lastDirection, gameInPause, pointerCursor);
 	drawGame();
 	do
 	{
@@ -27,7 +28,7 @@ int gameplay()
 			drawGame(score, currentDirection);
 			if (!gameInPause)
 			{
-				drawGame(snake, snakeFood, currentDirection, lastDirection);
+				drawGame(snake, snakeFood, currentDirection, lastDirection,headColor,bodyColor);
 			}
 			gameLogic(currentDirection, snake, snakeFood, whidth, height, score, lastDirection);
 			if (backToMenu)
@@ -40,11 +41,15 @@ int gameplay()
 				gameOver = true;
 			}
 		}
+		if (score == winPoints)
+		{
+			winCondition = true;
+			gameOver = true;
+		}
 	} while (!gameOver);
 	int playerAnsw;
-	drawGame(snake, snakeFood, currentDirection, lastDirection);
-
-	playerAnsw = secondWill(score,pointerCursor);
+	drawGame(snake, snakeFood, currentDirection, lastDirection,headColor,bodyColor);
+	playerAnsw = secondWill(score, pointerCursor, winCondition);
 	if (playerAnsw == 1)
 	{
 		return 1;
@@ -55,7 +60,7 @@ int gameplay()
 		return 0;
 	}
 }
-void setUp(bool& gameOver, int& currentDirection, Snake& snake, int whidth, int height, Food& snakeFood, int& score, bool& backToMenu, int& lastDirection, bool& gamInPause,int& pointerCursor)
+void setUp(bool& gameOver, int& currentDirection, Snake& snake, int whidth, int height, Food& snakeFood, int& score, bool& backToMenu, int& lastDirection, bool& gamInPause, int& pointerCursor)
 {
 	whidth = 42;
 	height = 33;
@@ -380,7 +385,7 @@ void drawGame(int score, int currentDirection)
 	gotoXY(90, 32);
 	cout << "Volver al Menu Principal" << endl;
 }
-void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirection)
+void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirection,int headColor,int bodyColor)
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 	//SetConsoleTextAttribute(h, 14);
@@ -408,7 +413,7 @@ void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirecti
 			{
 				if (!snake.isDead)
 				{
-
+					SetConsoleTextAttribute(h, headColor);
 					if (currentDirection == (int)Directions::Up)
 					{
 						cout << snakeHeadUp;
@@ -449,11 +454,11 @@ void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirecti
 				{
 					SetConsoleTextAttribute(h, 12);
 					cout << snakeDeadHead;
-					SetConsoleTextAttribute(h, 9);
 				}
 			}
 			else if (rows == snakeFood.foodPositionY && columns == snakeFood.foodPositionX)
 			{
+				SetConsoleTextAttribute(h, 12);
 				cout << cherry;
 			}
 			else
@@ -469,7 +474,7 @@ void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirecti
 							SetConsoleTextAttribute(h, 12);
 							cout << snakeDeadBodyChar;
 						}
-						SetConsoleTextAttribute(h, 9);
+						SetConsoleTextAttribute(h, bodyColor);
 						cout << snakeBodyChar;
 						print = true;
 					}
@@ -644,7 +649,7 @@ void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int w
 		snake.tailLenght++;
 	}
 }
-int secondWill(int score,int& pointerCursor)
+int secondWill(int score, int& pointerCursor, bool winCondition)
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -665,66 +670,127 @@ int secondWill(int score,int& pointerCursor)
 	int playerSecondWillSelection;
 	do
 	{
-		SetConsoleTextAttribute(h, 96);
-		gotoXY(23, 15);
-		cout << uperLeftCorner;
-		for (int i = 0; i < 30; i++)
+		if (winCondition)
 		{
-			cout << horizontalRow;
-		}
-		cout << uperRightCorner << endl;
-		gotoXY(23, 16);
-		cout << verticalColumn << "          Game  Over          " << verticalColumn << endl;
-		gotoXY(23, 17);
-		cout << verticalColumn << "       player Score: " << score ;
-		if (score < 10)
-		{
-			cout << "        ";
-		}
-		else if (score >= 10 && score < 100)
-		{
-			cout << "       ";
+			SetConsoleTextAttribute(h, 160);
+			gotoXY(23, 15);
+			cout << uperLeftCorner;
+			for (int i = 0; i < 30; i++)
+			{
+				cout << horizontalRow;
+			}
+			cout << uperRightCorner << endl;
+			gotoXY(23, 16);
+			cout << verticalColumn << "          Game  Win!          " << verticalColumn << endl;
+			gotoXY(23, 17);
+			cout << verticalColumn << "       player Score: " << score;
+			if (score < 10)
+			{
+				cout << "        ";
+			}
+			else if (score >= 10 && score < 100)
+			{
+				cout << "       ";
+			}
+			else
+			{
+				cout << "      ";
+			}
+			cout << verticalColumn << endl;
+			gotoXY(23, 18);
+			cout << verticalColumn << "       Volver a Jugar ?       " << verticalColumn << endl;
+			gotoXY(23, 19);
+			cout << verticalColumn;
+			if (pointerCursor == 1)
+			{
+				SetConsoleTextAttribute(h, 10);
+			}
+			cout << "              Si              ";
+			SetConsoleTextAttribute(h, 160);
+			cout << verticalColumn << endl;
+			gotoXY(23, 20);
+			cout << verticalColumn;
+			if (pointerCursor == 2)
+			{
+				SetConsoleTextAttribute(h, 10);
+			}
+			cout << "              No              ";
+			SetConsoleTextAttribute(h, 160);
+			cout << verticalColumn << endl;
+			gotoXY(23, 21);
+			cout << lowerLeftCorner;
+			for (int i = 0; i < 30; i++)
+			{
+				cout << horizontalRow;
+			}
+			cout << lowerRightCorner << endl;
+
+			playerSecondWillSelection = pointer(2, 1, pointerCursor);
 		}
 		else
 		{
-			cout << "      ";
-		}
-		cout << verticalColumn << endl;
-		gotoXY(23, 18);
-		cout << verticalColumn << "       Volver a Jugar ?       " << verticalColumn << endl;
-		gotoXY(23, 19);
-		cout << verticalColumn;
-		if (pointerCursor == 1)
-		{
-			SetConsoleTextAttribute(h, 14);
-		}
-		cout << "              Si              ";
-		SetConsoleTextAttribute(h, 96);
-		cout << verticalColumn << endl;
-		gotoXY(23, 20);
-		cout << verticalColumn;
-		if (pointerCursor == 2)
-		{
-			SetConsoleTextAttribute(h, 14);
-		}
-		cout << "              No              ";
-		SetConsoleTextAttribute(h, 96);
-		cout << verticalColumn << endl;
-		gotoXY(23, 21);
-		cout << lowerLeftCorner;
-		for (int i = 0; i < 30; i++)
-		{
-			cout << horizontalRow;
-		}
-		cout << lowerRightCorner << endl;
 
-		playerSecondWillSelection = pointer(2,1,pointerCursor);
+			SetConsoleTextAttribute(h, 192);
+			gotoXY(23, 15);
+			cout << uperLeftCorner;
+			for (int i = 0; i < 30; i++)
+			{
+				cout << horizontalRow;
+			}
+			cout << uperRightCorner << endl;
+			gotoXY(23, 16);
+			cout << verticalColumn << "          Game  Over          " << verticalColumn << endl;
+			gotoXY(23, 17);
+			cout << verticalColumn << "       player Score: " << score;
+			if (score < 10)
+			{
+				cout << "        ";
+			}
+			else if (score >= 10 && score < 100)
+			{
+				cout << "       ";
+			}
+			else
+			{
+				cout << "      ";
+			}
+			cout << verticalColumn << endl;
+			gotoXY(23, 18);
+			cout << verticalColumn << "       Volver a Jugar ?       " << verticalColumn << endl;
+			gotoXY(23, 19);
+			cout << verticalColumn;
+			if (pointerCursor == 1)
+			{
+				SetConsoleTextAttribute(h, 12);
+			}
+			cout << "              Si              ";
+			SetConsoleTextAttribute(h, 192);
+			cout << verticalColumn << endl;
+			gotoXY(23, 20);
+			cout << verticalColumn;
+			if (pointerCursor == 2)
+			{
+				SetConsoleTextAttribute(h, 12);
+			}
+			cout << "              No              ";
+			SetConsoleTextAttribute(h, 192);
+			cout << verticalColumn << endl;
+			gotoXY(23, 21);
+			cout << lowerLeftCorner;
+			for (int i = 0; i < 30; i++)
+			{
+				cout << horizontalRow;
+			}
+			cout << lowerRightCorner << endl;
+
+			playerSecondWillSelection = pointer(2, 1, pointerCursor);
+		}
 
 		if (playerSecondWillSelection != 0)
 		{
 			secondWillSelection = true;
 		}
-		SetConsoleTextAttribute(h, 14);
+		SetConsoleTextAttribute(h, 12);
 	} while (!secondWillSelection);
 
 	system("cls");

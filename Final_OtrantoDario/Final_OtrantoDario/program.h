@@ -8,6 +8,7 @@
 using namespace std;    // std::cout, std::cin
 void mainMenu();
 int showMainMenu(int& pointerCursor);
-bool showExitScreen();
 int credits();
-enum class MenuStates { MainMenu, Gameplay, Rules, Credits, Exit };
+int optionsMenu(int& winPoints, int& headColor, int& bodyColor);
+bool showExitScreen();
+enum class MenuStates { MainMenu, Gameplay,Options, Rules, Credits, Exit };
