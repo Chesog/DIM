@@ -17,7 +17,6 @@ int pointer(int maxOption, int minOption, int& pointerCursor) // cursor para el 
 	COORD consolecursorposition = { 0,0 };
 
 	int defaultOption = 0;
-	int returnToMenu = 14;
 	int max = maxOption;
 	int min = minOption;
 	char cursor;

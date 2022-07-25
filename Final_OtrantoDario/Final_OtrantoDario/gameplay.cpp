@@ -1,6 +1,6 @@
 ﻿#include "gameplay.h"
 
-int gameplay(int winPoints,int headColor,int bodyColor)
+int gameplay(int winPoints,int headColor,int bodyColor,int foodColor)
 {
 	system("cls");
 	bool gameOver;
@@ -28,7 +28,7 @@ int gameplay(int winPoints,int headColor,int bodyColor)
 			drawGame(score, currentDirection);
 			if (!gameInPause)
 			{
-				drawGame(snake, snakeFood, currentDirection, lastDirection,headColor,bodyColor);
+				drawGame(snake, snakeFood, currentDirection, lastDirection,headColor,bodyColor,foodColor);
 			}
 			gameLogic(currentDirection, snake, snakeFood, whidth, height, score, lastDirection);
 			if (backToMenu)
@@ -48,7 +48,7 @@ int gameplay(int winPoints,int headColor,int bodyColor)
 		}
 	} while (!gameOver);
 	int playerAnsw;
-	drawGame(snake, snakeFood, currentDirection, lastDirection,headColor,bodyColor);
+	drawGame(snake, snakeFood, currentDirection, lastDirection,headColor,bodyColor,foodColor);
 	playerAnsw = secondWill(score, pointerCursor, winCondition);
 	if (playerAnsw == 1)
 	{
@@ -385,7 +385,7 @@ void drawGame(int score, int currentDirection)
 	gotoXY(90, 32);
 	cout << "Volver al Menu Principal" << endl;
 }
-void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirection,int headColor,int bodyColor)
+void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirection,int headColor,int bodyColor,int foodColor)
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 	//SetConsoleTextAttribute(h, 14);
@@ -458,7 +458,7 @@ void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirecti
 			}
 			else if (rows == snakeFood.foodPositionY && columns == snakeFood.foodPositionX)
 			{
-				SetConsoleTextAttribute(h, 12);
+				SetConsoleTextAttribute(h, foodColor);
 				cout << cherry;
 			}
 			else
