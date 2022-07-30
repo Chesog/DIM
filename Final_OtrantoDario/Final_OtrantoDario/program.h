@@ -7,8 +7,10 @@
 
 using namespace std;    // std::cout, std::cin
 void mainMenu();
+void showKeys(int xValue, int yValue);
 int showMainMenu(int& pointerCursor);
 int credits();
+int showRules();
 int optionsMenu(int& winPoints, int& headColor, int& bodyColor,int& foodColor,int& pointerCursor);
 bool showExitScreen();
 enum class MenuStates { MainMenu, Gameplay,Options, Rules, Credits, Exit };

@@ -1,6 +1,6 @@
 ﻿#include "program.h"
 
-void mainMenu()
+void mainMenu()		// para navegar los distintos estados del menu
 {
 	hidecursor();
 	ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
@@ -26,6 +26,7 @@ void mainMenu()
 			menuAnsw = optionsMenu(winPoints, headColor, bodyColor, foodColor, pointerCursor);
 			break;
 		case (int)MenuStates::Rules:
+			menuAnsw = showRules();
 			break;
 		case (int)MenuStates::Credits:
 			menuAnsw = credits();
@@ -38,7 +39,7 @@ void mainMenu()
 		}
 	} while (gameOn);
 }
-int showMainMenu(int& pointerCursor)
+int showMainMenu(int& pointerCursor)	// Funcion para el dibujado del Menu Principal
 {
 	gotoXY(0, 0);
 	char uperLeftCorner = 201; // esquina superior izquierda ╔ 
@@ -139,26 +140,7 @@ int showMainMenu(int& pointerCursor)
 	cout << lowerRightCorner << endl;
 
 	SetConsoleTextAttribute(h, 15);
-	xValue = 10;
-	yValue = 30;
-	gotoXY(xValue, yValue);
-	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
-	gotoXY(xValue, yValue + 1);
-	cout << verticalColumn << " ^ " << verticalColumn << " Para Subir" << endl;
-	gotoXY(xValue, yValue + 2);
-	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
-	gotoXY(xValue, yValue + 3);
-	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
-	gotoXY(xValue, yValue + 4);
-	cout << verticalColumn << " v " << verticalColumn << " Para Bajar" << endl;
-	gotoXY(xValue, yValue + 5);
-	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
-	gotoXY(xValue - 2, yValue + 6);
-	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
-	gotoXY(xValue - 2, yValue + 7);
-	cout << verticalColumn << " Space " << verticalColumn << " Para Seleccionar" << endl;
-	gotoXY(xValue - 2, yValue + 8);
-	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+	showKeys(10, 30);
 
 	if (_kbhit)
 	{
@@ -166,7 +148,7 @@ int showMainMenu(int& pointerCursor)
 		return answ;
 	}
 }
-int optionsMenu(int& winPoints, int& headColor, int& bodyColor, int& foodColor, int& pointerCursor)
+int optionsMenu(int& winPoints, int& headColor, int& bodyColor, int& foodColor, int& pointerCursor) // Funcion para el dibujado y funcionamiento del menu de Opciones
 {
 	bool exitMenu = false;
 	system("cls");
@@ -195,7 +177,7 @@ int optionsMenu(int& winPoints, int& headColor, int& bodyColor, int& foodColor, 
 					 \        /    /|__/ \     (:   _) \   /\  |\   \        /   |    \    \ | (:      "|  /" \   :)  
 					  \"_____/    (_______)     \_______) (__\_|_)   \"_____/     \___|\____\)  \_______) (_______/   
 				                                                                                                  )" << endl;
-		if (optionsAnsw == 0)
+		if (optionsAnsw == 0) // Dibujado de el menu de opciones
 		{
 
 			gotoXY(64, 14);
@@ -252,7 +234,7 @@ int optionsMenu(int& winPoints, int& headColor, int& bodyColor, int& foodColor, 
 			}
 			cout << lowerRightCorner << endl;
 		}
-		else if (optionsAnsw == (int)OptionsMenuStates::WinPointsCant)
+		else if (optionsAnsw == (int)OptionsMenuStates::WinPointsCant) // Logica y dibujado para el cambio de la condicion de victoria
 		{
 			pointerCursor = 1;
 			int answ = 0;
@@ -342,18 +324,21 @@ int optionsMenu(int& winPoints, int& headColor, int& bodyColor, int& foodColor, 
 						gotoXY(64, 24);
 						cout << "User ---> ";
 						cin >> newWinPoints;
+						//if (isdigit(newWinPoints))
+						//{
 						if (newWinPoints > maxWinPoints)
 						{
 							gotoXY(64, 26);
 							cout << "Ingrese un numero Valido" << endl;
-							gotoXY(64, 27);
-							cout << "Borre el Numero e Ingrese uno Nuevo" << endl;
+							gotoXY(64, 24);
+							cout << "                                   ";
 						}
 						else
 						{
 							winPoints = newWinPoints;
 							correctSet = true;
 						}
+						//}
 					} while (!correctSet);
 					answ = 3;
 				}
@@ -374,7 +359,7 @@ int optionsMenu(int& winPoints, int& headColor, int& bodyColor, int& foodColor, 
 			system("cls");
 			optionsAnsw = 0;
 		}
-		else if (optionsAnsw == (int)OptionsMenuStates::SnakeColor)
+		else if (optionsAnsw == (int)OptionsMenuStates::SnakeColor) // Logica y dibujado para el cambio de coloor de la serpiente
 		{
 			pointerCursor = 1;
 			int answ = 0;
@@ -590,7 +575,7 @@ int optionsMenu(int& winPoints, int& headColor, int& bodyColor, int& foodColor, 
 				else if (answ == 5)
 				{
 					bodyColor = 11;
-					headColor = 19;
+					headColor = 9;
 					colorSelected = true;
 					gotoXY(64, 25);
 					cout << "Color Seleccionado" << endl;
@@ -614,7 +599,7 @@ int optionsMenu(int& winPoints, int& headColor, int& bodyColor, int& foodColor, 
 			system("cls");
 			optionsAnsw = 0;
 		}
-		else if (optionsAnsw == (int)OptionsMenuStates::FruitColor)
+		else if (optionsAnsw == (int)OptionsMenuStates::FruitColor) // Logica y dibujado para el cambio de color de la fruta
 		{
 			pointerCursor = 1;
 			int answ = 0;
@@ -793,32 +778,13 @@ int optionsMenu(int& winPoints, int& headColor, int& bodyColor, int& foodColor, 
 			system("cls");
 			optionsAnsw = 0;
 		}
-		else if (optionsAnsw == (int)OptionsMenuStates::ExitToMainMenu)
+		else if (optionsAnsw == (int)OptionsMenuStates::ExitToMainMenu) // Volver al menu principal
 		{
 			exitMenu = true;
 		}
 
 		SetConsoleTextAttribute(h, 15);
-		int xValue = 10;
-		int yValue = 30;
-		gotoXY(xValue, yValue);
-		cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
-		gotoXY(xValue, yValue + 1);
-		cout << verticalColumn << " ^ " << verticalColumn << " Para Subir" << endl;
-		gotoXY(xValue, yValue + 2);
-		cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
-		gotoXY(xValue, yValue + 3);
-		cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
-		gotoXY(xValue, yValue + 4);
-		cout << verticalColumn << " v " << verticalColumn << " Para Bajar" << endl;
-		gotoXY(xValue, yValue + 5);
-		cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
-		gotoXY(xValue - 2, yValue + 6);
-		cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
-		gotoXY(xValue - 2, yValue + 7);
-		cout << verticalColumn << " Space " << verticalColumn << " Para Seleccionar" << endl;
-		gotoXY(xValue - 2, yValue + 8);
-		cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+		showKeys(10, 30);
 
 		if (_kbhit())
 		{
@@ -878,6 +844,90 @@ int credits() // Funcion con el dibujado de los creditos
 		return returnValue;
 	}
 }
+int showRules() // Funcion para mostrar el reglamento del juego
+{
+	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+	bool backToMainMenu = false;
+	char point = 254;
+	char horizontalRow = 205;	// linea horizontal ═
+	char verticalColumn = 186; // linea vertical ║ 
+	char uperLeftCorner = 201; // esquina superior izquierda ╔ 
+	char uperRightCorner = 187; // esquina superior derecha ╗ 
+	char lowerLeftCorner = 200; // esquina inferior izquierda ╚ 
+	char lowerRightCorner = 188; // esquina inferior Derecha ╝ 
+
+	system("cls");
+	do
+	{
+		gotoXY(0,0);
+		SetConsoleTextAttribute(h, 10);
+		cout << R"(
+						  _______     _______    _______    ___             __        ________  
+						 /"      \   /"     "|  /" _   "|  |"  |           /""\      /"       ) 
+						|:        | (: ______) (: ( \___)  ||  |          /    \    (:   \___/  
+						|_____/   )  \/    |    \/ \       |:  |         /' /\  \    \___  \    
+						 //      /   // ___)_   //  \ ___   \  |___     //  __'  \    __/  \\   
+						|:  __   \  (:      "| (:   _(  _| ( \_|:  \   /   /  \\  \  /" \   :)  
+						|__|  \___)  \_______)  \_______)   \_______) (___/    \___)(_______/   
+						                                                                        )" << endl;
+		SetConsoleTextAttribute(h, 14);
+		gotoXY(45, 10);
+		cout << point << " ";
+		cout << "El juego consiste en hacer que la serpiente coma la fruta" << endl;
+		gotoXY(45, 12);
+		cout << point << " ";
+		cout << "Cada vez que la serpiente coma una fruta la puntuacion de jugador aumenta" << endl;
+		gotoXY(47, 13);
+		cout << "Y la propia serpiente tambien aumenta en su tamanio , haciendo mas dificil el moverse" << endl;
+		gotoXY(45, 15);
+		cout << point << " ";
+		cout << "La serpiente se mueve con las flechas del teclado < ^ v >" << endl;
+		gotoXY(45, 17);
+		cout << point << " ";
+		cout << "Cuando la serpiente llega a el borde del tablero saldra por el lado contrario" << endl;
+		gotoXY(45, 19);
+		cout << point << " ";
+		cout << "La serpiente no podra moverse a la direccion contraria a la direccion actual" << endl;
+		gotoXY(47, 20);
+		cout << "Es decir si estoy lledo para la derecha no puedo inmediatamente ir a la izquierda" << endl;
+		gotoXY(47, 21);
+		cout << "Tengo que primero cambiar mi direccion para arriba o abajo para poder ir a la izquierda" << endl;
+		gotoXY(45, 23);
+		cout << point << " ";
+		cout << "Si la serpiente come su propio cuerpo muere y termina la partida" << endl;
+		gotoXY(45, 25);
+		cout << point << " ";
+		cout << "Otra forma para ganar es llegando al puntaje de victoria que por default es 100" << endl;
+		gotoXY(47, 26);
+		cout << "Pero este valor como el color de la serpiente y el de la fruta son modificables" << endl;
+		gotoXY(47, 27);
+		cout << "En el menu de Opciones" << endl;
+		gotoXY(45, 29);
+		cout << point << " ";
+		cout << "Mientras se esta jugando el jugador puede optar por pausar el juego con la barra espaciadora" << endl;
+		gotoXY(47, 30);
+		cout << "O si preciona el esc podra volver al menu principal" << endl;
+
+		SetConsoleTextAttribute(h, 15);
+		gotoXY(30, 33);
+		cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+		gotoXY(30, 34);
+		cout << verticalColumn << " Esc " << verticalColumn << " Volver al Menu Principal " << endl;
+		gotoXY(30, 35);
+		cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+
+		if (_kbhit())
+		{
+			char playerInput = _getch();
+			if (playerInput == ESC)
+			{
+				backToMainMenu = true;
+			}
+		}
+	} while (!backToMainMenu);
+	system("cls");
+	return 0;
+}
 bool showExitScreen() // muestra el mensaje de salida
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -896,19 +946,32 @@ bool showExitScreen() // muestra el mensaje de salida
 	system("pause");
 	return false;
 }
+void showKeys(int xValue, int yValue)  // Funcion para mostrar los controles en el menu
+{
+	char uperLeftCorner = 201; // esquina superior izquierda ╔ 
+	char uperRightCorner = 187; // esquina superior derecha ╗ 
+	char lowerLeftCorner = 200; // esquina inferior izquierda ╚ 
+	char lowerRightCorner = 188; // esquina inferior Derecha ╝ 
+	char horizontalRow = 205;	// linea horizontal ═ 
+	char verticalColumn = 186; // linea vertical ║ 
+	char empty = 32;	// valor vacio en el tablero 
 
-
-
-
-//_kbhit(); -> Retorna verdadero o falso si la consola registra una tecla en el buffer.
-
-//_getch(); -> Saca la tecla en el buffer del teclado.
-
- //while (!_kbhit())
- //        _cputs("Hit me!! ");
-
-	 /* Use _getch to throw the key away. */
- //    printf("\nKey struck was '%c'\n", _getch());
-
-//_putch(); -> escribe caracteres de unicode en la consola. 
-//_ungetch(); -> Pone un carácter de vuelta al buffer de teclado
+	gotoXY(xValue, yValue++);
+	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+	gotoXY(xValue, yValue++);
+	cout << verticalColumn << " ^ " << verticalColumn << " Para Subir" << endl;
+	gotoXY(xValue, yValue++);
+	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+	gotoXY(xValue, yValue++);
+	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+	gotoXY(xValue, yValue++);
+	cout << verticalColumn << " v " << verticalColumn << " Para Bajar" << endl;
+	gotoXY(xValue, yValue++);
+	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+	gotoXY(xValue - 2, yValue++);
+	cout << uperLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << uperRightCorner << endl;
+	gotoXY(xValue - 2, yValue++);
+	cout << verticalColumn << " Space " << verticalColumn << " Para Seleccionar" << endl;
+	gotoXY(xValue - 2, yValue++);
+	cout << lowerLeftCorner << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << horizontalRow << lowerRightCorner << endl;
+}

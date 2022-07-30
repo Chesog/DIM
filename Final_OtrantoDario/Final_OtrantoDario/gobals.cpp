@@ -1,10 +1,10 @@
 #include "globals.h"
 
-void gotoXY(int X, int Y)
+void gotoXY(int X, int Y) // Funcion para Mover el cursor a distintas cordenadas del tablero
 {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (short)X,(short)Y });
 }
-void hidecursor()
+void hidecursor()	//Funcion para esconder el cursor
 {
 	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO info;

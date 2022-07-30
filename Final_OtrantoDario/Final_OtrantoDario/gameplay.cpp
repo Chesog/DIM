@@ -1,22 +1,23 @@
 ﻿#include "gameplay.h"
 
-int gameplay(int winPoints,int headColor,int bodyColor,int foodColor)
+int gameplay(int winPoints,int headColor,int bodyColor,int foodColor) // Bucle principal del juego
 {
 	system("cls");
-	bool gameOver;
-	bool backToMenu;
-	bool gameInPause;
-	bool winCondition = false;
+	bool gameOver;						// Condicion para el bucle principal
+	bool backToMenu;					// Condicion para volver al Menu Principal
+	bool gameInPause;					// Condicion para la pausa
+	bool winCondition = false;			// Condicion de Victoria
 
-	int whidth = 42;
-	int height = 33;
-	int score;
-	int pointerCursor;
-	int currentDirection;
-	int lastDirection;
+	int whidth;							// Ancho del Tablero
+	int height;							// Alto del tablero
+	int score;							// Puntuacion del jugador
+	int pointerCursor;					// Cursor para el jugador
+	int currentDirection;				// Variable para la direccion actual
+	int lastDirection;					// Variable para la direccion anterior
+	int animation = 0;
 
-	Snake snake;
-	Food snakeFood;
+	Snake snake;						// Struct de la Serpiente
+	Food snakeFood;						// Struct para la comida 
 
 	setUp(gameOver, currentDirection, snake, whidth, height, snakeFood, score, backToMenu, lastDirection, gameInPause, pointerCursor);
 	drawGame();
@@ -28,7 +29,7 @@ int gameplay(int winPoints,int headColor,int bodyColor,int foodColor)
 			drawGame(score, currentDirection);
 			if (!gameInPause)
 			{
-				drawGame(snake, snakeFood, currentDirection, lastDirection,headColor,bodyColor,foodColor);
+				drawGame(snake, snakeFood, currentDirection, lastDirection,headColor,bodyColor,foodColor,animation);
 			}
 			gameLogic(currentDirection, snake, snakeFood, whidth, height, score, lastDirection);
 			if (backToMenu)
@@ -48,7 +49,7 @@ int gameplay(int winPoints,int headColor,int bodyColor,int foodColor)
 		}
 	} while (!gameOver);
 	int playerAnsw;
-	drawGame(snake, snakeFood, currentDirection, lastDirection,headColor,bodyColor,foodColor);
+	drawGame(snake, snakeFood, currentDirection, lastDirection,headColor,bodyColor,foodColor,animation);
 	playerAnsw = secondWill(score, pointerCursor, winCondition);
 	if (playerAnsw == 1)
 	{
@@ -60,8 +61,10 @@ int gameplay(int winPoints,int headColor,int bodyColor,int foodColor)
 		return 0;
 	}
 }
-void setUp(bool& gameOver, int& currentDirection, Snake& snake, int whidth, int height, Food& snakeFood, int& score, bool& backToMenu, int& lastDirection, bool& gamInPause, int& pointerCursor)
+void setUp(bool& gameOver, int& currentDirection, Snake& snake, int& whidth, int& height, Food& snakeFood, int& score, bool& backToMenu, int& lastDirection, bool& gamInPause, int& pointerCursor) // Funcion para el seteo defoult de las variables
 {
+	// Seteo a los valores defoult las variables
+
 	whidth = 42;
 	height = 33;
 	gameOver = false;
@@ -71,13 +74,18 @@ void setUp(bool& gameOver, int& currentDirection, Snake& snake, int whidth, int 
 	snake.positionY = height / 2;
 	snake.isDead = false;
 	snake.tailLenght = 4;
+	for (int i = 0; i < 100; i++)
+	{
+		snake.tailPositionX[i] = - 1;
+		snake.tailPositionY[i] = - 1;
+	}
 	snakeFood = randomiceSnakeFood(whidth, height);
 	score = 0;
 	lastDirection = (int)Directions::Right;
 	gamInPause = true;
 	pointerCursor = 1;
 }
-void drawGame()
+void drawGame() // Dibuja el recuadro para el juego
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(h, 15);
@@ -192,7 +200,7 @@ void drawGame()
 	}
 	cout << lowerRightCorner;
 }
-void drawGame(int score, int currentDirection)
+void drawGame(int score, int currentDirection) // Dibujado de la puntuacion del jugador y los controles interactivos
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -385,24 +393,27 @@ void drawGame(int score, int currentDirection)
 	gotoXY(90, 32);
 	cout << "Volver al Menu Principal" << endl;
 }
-void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirection,int headColor,int bodyColor,int foodColor)
+void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirection,int headColor,int bodyColor,int foodColor,int& animation) // Funcion para el dibujado de la serpiente y la comida
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 	//SetConsoleTextAttribute(h, 14);
 
-	char empty = 32;	// valor vacio en el tablero 
-	char cherry = 162;
-	char snakeDeadHead = 120;
-	char snakeHeadUp = 118;
-	char snakeHeadDown = 94;
-	char snakeHeadLeft = 62;
-	char snakeHeadRight = 60;
-	char snakeBodyChar = 245;
-	char snakeDeadBodyChar = 43;
-	int maxBoardSizeColumns = 42;
-	int maxBoardSizeRows = 33;
-	int xValue = 17;
-	int yValue = 1;
+	char empty = 32;						// valor vacio en el tablero 
+	char cherry = 162;						// Comida de la serpiente ó
+	char snakeDeadHead = 120;				// cabeza muerta de la serpiente x
+	char snakeHeadUp = 118;					// cabeza para la direccion arriba de la serpiente v
+	char snakeHeadDown = 94;				// cabeza para la direccion abajo de la serpiente ^
+	char snakeHeadLeft = 62;				// cabeza para la direccion izquierda de la serpiente >
+	char snakeHeadRight = 60;				// cabeza para la direccion Derecha de la serpiente <
+	char snakeBodyChar = 245;				// cuerpo de la serpiente §
+	char snakeDeadBodyChar = 43;			// cuerpo muerto de la serpiente +
+	int maxBoardSizeColumns = 44;			// cantidad maxima de columnas
+	int maxBoardSizeRows = 33;				// cantidad mazima de filas
+	int xValue = 17;						// valor en x para el gotoXY
+	int yValue = 1;							// valor en y para el gotoXY
+
+	char snakeHeadClosedHorizontal = 179;	// caracter para la animacion de la serpiente
+	char snakeHeadClosedVertical = 196;		// caracter para la animacion de la serpiente
 	gotoXY(xValue, yValue);
 	for (int rows = 0; rows < maxBoardSizeRows; rows++)
 	{
@@ -416,19 +427,55 @@ void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirecti
 					SetConsoleTextAttribute(h, headColor);
 					if (currentDirection == (int)Directions::Up)
 					{
-						cout << snakeHeadUp;
+						if (animation == 0)
+						{
+							cout << snakeHeadUp;
+							animation = 1;
+						}
+						else
+						{
+							cout << snakeHeadClosedHorizontal;
+							animation = 0;
+						}
 					}
 					else if (currentDirection == (int)Directions::Down)
 					{
-						cout << snakeHeadDown;
+						if (animation == 0)
+						{
+							cout << snakeHeadDown;
+							animation = 1;
+						}
+						else
+						{
+							cout << snakeHeadClosedHorizontal;
+							animation = 0;
+						}
 					}
 					else if (currentDirection == (int)Directions::Left)
 					{
-						cout << snakeHeadLeft;
+						if (animation == 0)
+						{
+							cout << snakeHeadLeft;
+							animation = 1;
+						}
+						else
+						{
+							cout << snakeHeadClosedVertical;
+							animation = 0;
+						}
 					}
 					else if (currentDirection == (int)Directions::Right)
 					{
-						cout << snakeHeadRight;
+						if (animation == 0)
+						{
+							cout << snakeHeadRight;
+							animation = 1;
+						}
+						else
+						{
+							cout << snakeHeadClosedVertical;
+							animation = 0;
+						}
 					}
 					else
 					{
@@ -464,7 +511,7 @@ void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirecti
 			else
 			{
 				bool print = false;
-				for (int i = 0; i < snake.tailLenght; i++)
+				for (int i = 1; i < snake.tailLenght; i++)
 				{
 					print = false;
 					if (snake.tailPositionX[i] == columns && snake.tailPositionY[i] == rows)
@@ -487,8 +534,9 @@ void drawGame(Snake snake, Food snakeFood, int currentDirection, int lastDirecti
 		}
 	}
 }
-void playerInput(int& currentDirection, bool& backToMenu, int& lastDirection, bool& gamInPause)
+void playerInput(int& currentDirection, bool& backToMenu, int& lastDirection, bool& gamInPause) // Logica para el input del jugador
 {
+	// Implementacion de las direcciones actuales y anteriores mediante el input del jugador
 	char playerInput;
 	if (_kbhit())
 	{
@@ -571,21 +619,22 @@ void playerInput(int& currentDirection, bool& backToMenu, int& lastDirection, bo
 		}
 	}
 }
-void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int whidth, const int height, int& score, int lastDirection)
+void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int whidth, const int height, int& score, int lastDirection) // Funcion con la logica del juego
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-	int prevTailPositionX;
-	int prevTailPositionY;
-	int prevTailPosition2X;
-	int prevTailPosition2Y;
+	int prevTailPositionX;		// Posicion previa de la cola de la serpiente en x
+	int prevTailPositionY;		// Posicion previa de la cola de la serpiente en y
+	int prevTailPosition2X;		// Posicion previa de la cola de la serpiente en x auxiliar
+	int prevTailPosition2Y;		// Posicion previa de la cola de la serpiente en y auxiliar
 	if (currentDirection != (int)Directions::Stop)
 	{
+		//------------------------ Logica para la cola de la serpiente ----------------------------
 		snake.tailPositionX[0] = snake.positionX;
 		snake.tailPositionY[0] = snake.positionY;
-		prevTailPositionX = snake.tailPositionX[0];  // posicion previa de la cola en x
-		prevTailPositionY = snake.tailPositionY[0];  // posicion previa de la cola en y
+		prevTailPositionX = snake.tailPositionX[0];  
+		prevTailPositionY = snake.tailPositionY[0];  
 
-		for (int i = 1; i < snake.tailLenght; i++)
+		for (int i = 0; i < snake.tailLenght; i++)		
 		{
 			prevTailPosition2X = snake.tailPositionX[i];
 			prevTailPosition2Y = snake.tailPositionY[i];
@@ -594,9 +643,10 @@ void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int w
 			prevTailPositionX = prevTailPosition2X;
 			prevTailPositionY = prevTailPosition2Y;
 		}
+		//----------------------- Fin de la logica de la cola de la Serpiente ----------------------
 	}
 
-
+	//--------------------------- Inicio de la logica para la cabeza de la serpiente ---------------
 	switch (currentDirection)
 	{
 	case (int)Directions::Stop:
@@ -618,6 +668,9 @@ void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int w
 	default:
 		break;
 	}
+	//--------------------------- Fin de la logica para la cabeza de la serpiente ---------------
+	
+	//--------------------------- Inicio del chequeo de si la serpiente esta viva ---------------
 	for (int i = 0; i < snake.tailLenght; i++)
 	{
 		if (snake.tailPositionX[i] == snake.positionX && snake.tailPositionY[i] == snake.positionY)
@@ -625,6 +678,7 @@ void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int w
 			snake.isDead = true;
 		}
 	}
+	//--------------------------- Logica para el teleport al atrvezar los bordes del tablero ---------------
 	if (snake.positionX > whidth)
 	{
 		snake.positionX = 0;
@@ -641,7 +695,7 @@ void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int w
 	{
 		snake.positionY = 0;
 	}
-
+	// ----------------------------- Logica para comer la fruta -------------------------------------------
 	if (snake.positionX == snakeFood.foodPositionX && snake.positionY == snakeFood.foodPositionY)
 	{
 		score = score++;
@@ -649,7 +703,7 @@ void gameLogic(int& currentDirection, Snake& snake, Food& snakeFood, const int w
 		snake.tailLenght++;
 	}
 }
-int secondWill(int score, int& pointerCursor, bool winCondition)
+int secondWill(int score, int& pointerCursor, bool winCondition) // Funcion para segundo intento tras perder
 {
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -803,7 +857,7 @@ int secondWill(int score, int& pointerCursor, bool winCondition)
 		return 0;
 	}
 }
-Food randomiceSnakeFood(int whidth, int height)
+Food randomiceSnakeFood(int whidth, int height) // Funcion para la colocacion random de la comida en el tablero
 {
 	srand(time(NULL));
 	Food aux;
